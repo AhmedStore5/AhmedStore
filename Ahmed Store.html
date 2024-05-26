@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدونة شحن الألعاب</title>
+    <style>
+        /* أسلوب التصميم */
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a {
+            float: right;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .navbar .icon {
+            display: none;
+        }
+        .main-content {
+            padding: 16px;
+            margin-top: 60px;
+        }
+        .games {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .game {
+            flex: 1 1 calc(45% - 40px);
+            box-sizing: border-box;
+            margin: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .game img {
+            max-width: 100%;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .game a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .game a:hover {
+            background-color: #333;
+            color: #fff;
+        }
+        .game:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .hidden {
+            display: none;
+        }
+        .cart-icon {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 999;
+            display: none;
+        }
+        .cart-icon img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+        .payment-options {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 250px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .payment-options img {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .payment-options img:hover {
+            opacity: 0.7;
+        }
+        /* أسلوب التمرير */
+        .scroll-btns {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .scroll-btns a {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .scroll-btns a:hover {
+            background-color: #555;
+            transform: translateY(-5px);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+        @media screen and (max-width: 600px) {
+            .navbar a:not(:first-child) {display: none;}
+            .navbar a.icon {
+                float: left;
+                display: block;
+            }
+            .game {
+                flex: 1 1 calc(100% - 40px);
+            }
+        }
+        @media screen and (max-width: 600px) {
+            .navbar.responsive {position: relative;}
+            .navbar.responsive .icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+            .navbar.responsive a {
+                float: none;
+                display: block;
+                text-align: left;
+            }
+        }
+        /* تحسينات صفحة تغيير اللغة */
+        #languageOptions {
+            margin-top: 20px;
+        }
+        #languageSelect {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+        #languageSelect:focus {
+            border-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<!-- شريط التنقل -->
+<div class="navbar" id="myNavbar">
+    <a href="javascript:void(0);" class="icon" onclick="toggleMenu()">☰</a>
+    <a href="javascript:void(0);" onclick="openSettings()">الصفحه الرئيسية</a>
+    <a href="javascript:void(0);" onclick="contactWhatsApp()">تواصل معنا</a>
+    <a href="javascript:void(0);" onclick="openCart()">سلة المبيعات</a>
+    <a href="javascript:void(0);" onclick="showSection('languagePage')">تغيير اللغة</a>
+</div>
+
+<!-- المحتوى الرئيسي -->
+<div class="main-content" id="home">
+    <h1>مرحبًا بكم في مدونة شحن الألعاب</h1>
+    <div class="games">
+        <div class="game">
+            <img src="../images/1.jpg" alt="ببجي">
+            <a href="javascript:void(0);" onclick="showSection('pubg')">ببجي</a>
+        </div>
+        <div class="game">
+            <img src="../images/fortnite.jpg" alt="فورتنايت">
+            <a href="javascript:void(0);" onclick="showSection('fortnite')">فورتنايت</a>
+        </div>
+        <div class="game">
+            <img src="../images/cod.jpg" alt="كول أوف ديوتي">
+            <a href="javascript:void(0);" onclick="showSection('cod')">كول أوف ديوتي</a>
+        </div>
+        <div class="game">
+            <img src="../images/2.jpg" alt="فري فاير">
+            <a href="javascript:void(0);" onclick="showSection('free_fire')">فري فاير</a>
+        </div>
+    </div>
+</div>
+
+<!-- قوائم الأقسام -->
+<div id="pubg" class="main-content hidden">
+    <h1>أسعار شحن ببجي</h1>
+    <table>
+        <tr>
+            <th>الباقة</th>
+            <th>السعر</th>
+            <th>إضافة إلى السلة</th>
+        </tr>
+        <tr>
+            <td>60 شدة</td>
+            <td>1.00 دولار</td>
+            <td><button onclick="addToCart('60 شدة', 1.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>325 شدة</td>
+            <td>5.00 دولار</td>
+            <td><button onclick="addToCart('325 شدة', 5.00)">أضف إلى السلة</button></td>
+        </tr>
+     
+        <tr>
+            <td>1800 شدة</td>
+            <td>20.00 دولار</td>
+            <td><button onclick="addToCart('1800 شدة', 20.00)">شراء الان</button></button></td>
+        </tr>
+    </table>
+    <button onclick="showSection('home')">رجوع إلى الرئيسية</button>
+</div>
+
+<div id="fortnite" class="main-content hidden">
+    <h1>أسعار شحن فورتنايت</h1>
+    <table>
+        <tr>
+            <th>الباقة</th>
+            <th>السعر</th>
+            <th>إضافة إلى السلة</th>
+        </tr>
+        <tr>
+            <td>1000 في-بكس</td>
+            <td>10.00 دولار</td>
+            <td><button onclick="addToCart('1000 في-بكس', 10.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>2800 في-بكس</td>
+            <td>25.00 دولار</td>
+            <td><button onclick="addToCart('2800 في-بكس', 25.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>5000 في-بكس</td>
+            <td>40.00 دولار</td>
+            <td><button onclick="addToCart('5000 في-بكس', 40.00)">أضف إلى السلة</button></td>
+        </tr>
+    </table>
+    <button onclick="showSection('home')">رجوع إلى الرئيسية</button>
+</div>
+
+<div id="cod" class="main-content hidden">
+    <h1>أسعار شحن كول أوف ديوتي</h1>
+    <table>
+        <tr>
+            <th>الباقة</th>
+            <th>السعر</th>
+            <th>إضافة إلى السلة</th>
+        </tr>
+        <tr>
+            <td>80 CP</td>
+            <td>1.00 دولار</td>
+            <td><button onclick="addToCart('80 CP', 1.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>420 CP</td>
+            <td>5.00 دولار</td>
+            <td><button onclick="addToCart('420 CP', 5.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>2400 CP</td>
+            <td>20.00 دولار</td>
+            <td><button onclick="addToCart('2400 CP', 20.00)">أضف إلى السلة</button></td>
+        </tr>
+    </table>
+    <button onclick="showSection('home')">رجوع إلى الرئيسية</button>
+</div>
+
+<div id="free_fire" class="main-content hidden">
+    <h1>أسعار شحن فري فاير</h1>
+    <table>
+        <tr>
+            <th>الباقة</th>
+            <th>السعر</th>
+            <th>إضافة إلى السلة</th>
+        </tr>
+        <tr>
+            <td>100 جوهرة</td>
+            <td>1.00 دولار</td>
+            <td><button onclick="addToCart('100 جوهرة', 1.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>500 جوهرة</td>
+            <td>5.00 دولار</td>
+            <td><button onclick="addToCart('500 جوهرة', 5.00)">أضف إلى السلة</button></td>
+        </tr>
+        <tr>
+            <td>2500 جوهرة</td>
+            <td>20.00 دولار</td>
+            <td><button onclick="addToCart('2500 جوهرة', 20.00)">أضف إلى السلة</button></td>
+        </tr>
+    </table>
+    <button onclick="showSection('home')">رجوع إلى الرئيسية</button>
+</div>
+
+<div id="languagePage" class="main-content hidden">
+    <h1>تغيير اللغة</h1>
+    <div id="languageOptions">
+        <select id="languageSelect">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <!-- يمكنك إضافة المزيد من الخيارات هنا -->
+        </select>
+    </div>
+    <button onclick="showSection('home')">رجوع إلى الرئيسية</button>
+</div>
+
+<!-- أيقونة السلة -->
+<div class="cart-icon" id="cartIcon">
+    <img src="cart.png" alt="سلة المبيعات" onclick="openCart()">
+</div>
+
+<!-- خيارات الدفع -->
+<div class="payment-options" id="paymentOptions">
+    <h3>اختر وسيلة الدفع</h3>
+    <img src="paypal.png" alt="PayPal" onclick="selectPayment('باي بال')">
+    <img src="visa.png" alt="فودافون كاش" onclick="selectPayment('Visa')">
+    <img src="mastercard.png" alt="فيزا إئتمان" onclick="selectPayment('MasterCard')">
+    <button onclick="closePaymentOptions()">إغلاق</button>
+</div>
+
+<!-- أزرار التمرير -->
+<div class="scroll-btns">
+    <a href="#" onclick="scrollToTop()">⬆️</a>
+    <a href="#" onclick="scrollToBottom()">⬇️</a>
+</div>
+
+<script>
+    function toggleMenu() {
+        var navbar = document.getElementById("myNavbar");
+        if (navbar.className === "navbar") {
+            navbar.className += " responsive";
+        } else {
+            navbar.className = "navbar";
+        }
+    }
+
+    function showSection(sectionId) {
+        var sections = document.getElementsByClassName('main-content');
+        for (var i = 0; i < sections.length; i++) {
+            sections[i].classList.add('hidden');
+        }
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function addToCart(item, price) {
+        // منطق إضافة العنصر إلى السلة
+        alert(item + " تمت إضافته إلى السلة بسعر " + price + " دولار");
+        document.getElementById('cartIcon').style.display = 'block';
+    }
+
+    function openCart() {
+        document.getElementById('paymentOptions').style.display = 'block';
+    }
+
+    function closePaymentOptions() {
+        document.getElementById('paymentOptions').style.display = 'none';
+    }
+
+    function selectPayment(method) {
+        alert("تم اختيار " + method + " كوسيلة دفع");
+        closePaymentOptions();
+    }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToBottom() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function openSettings() {
+        showSection('home');
+    }
+
+    function contactWhatsApp() {
+        window.location.href = "https://wa.me/YOUR_PHONE_NUMBER"; 
+    }
+</script>
+
+</body>
+</html>
